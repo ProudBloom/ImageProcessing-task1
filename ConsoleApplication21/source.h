@@ -8,3 +8,5 @@ using namespace cimg_library;
 extern void Help();
 
 CImg<double> Brightness(CImg<double> image, int x);
+
+CImg<double> Negative(CImg<double> image);
