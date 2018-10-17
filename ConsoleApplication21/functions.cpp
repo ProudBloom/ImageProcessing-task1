@@ -130,3 +130,4 @@ CImg <double> DiagonalFlip(CImg <double> image)
 {
 	return  HorizontalFlip(VercicalFlip(image));
 }
+
