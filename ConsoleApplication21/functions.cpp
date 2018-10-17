@@ -14,19 +14,31 @@ void Help()
 	cout << endl << "<ProgramName> <InputPictureName> --SomeOption <value> <OutputPictureName>\n" << endl;
 	cout << "Possible options:\n" << endl;
 	cout << "--brightness <value>" << endl
-		 << "--negative" <<  endl;
+		<< "--negative" << endl
+		<< "--contrast <value>" << endl
+		<< "--hflip" << endl
+		<< "--vflip" << endl
+		<< "--dflip" << endl;
 }
 
 CImg <double> Brightness(CImg<double> image, int value)
 {
+	
+
 	for (int i = 0; i < image.width(); i++)
 	{
 		for (int j = 0; j < image.height(); j++)
 		{
 			for (int k = 0; k < 3; k++)
 			{
-				if ((image(i, j, k) + value) >= 255) image(i, j, k) = 255;
-				if ((image(i, j, k) + value) <= 0) image(i, j, k) = 0;
+				if ((image(i, j, k) + value) >= 255)
+				{
+					image(i, j, k) = 255;
+				}
+				else if ((image(i, j, k) + value) <= 0) 
+				{
+					image(i, j, k) = 0;
+				}
 				else image(i, j, k) += value;
 			}
 		}
@@ -49,10 +61,11 @@ CImg <double> Negative(CImg<double> image)
 	return image;
 }
 
-CImg <double> Contrast(CImg<double> image, float value)
+CImg <double> Contrast(CImg<double> image, int value)
 {
 	double cont_factor;
 
+	
 	for (int i = 0; i < image.width(); i++)
 	{
 		for (int j = 0; j < image.height(); j++)
@@ -81,17 +94,39 @@ CImg <double> Contrast(CImg<double> image, float value)
 
 CImg <double> HorizontalFlip(CImg <double> image)
 {
-	for (int i = 0; i < image.width(); i++)
+	for (int i = 0; i < (image.width()/2); i++)
 	{
 		for (int j = 0; j < image.height(); j++)
 		{
 			for (int k = 0; k < 3; k++)
 			{
 				double temp = image(i, j, k);
-				image(i, j, k) = image(image.width() - i, j, k);
-				image(image.width() - i, j, k) = temp;
+				image(i, j, k) = image( (image.width()-1) - i, j, k);
+				image( (image.width() - 1) - i, j, k) = temp;
 			}
 		}
 	}
 	return image;
+}
+
+CImg <double> VercicalFlip(CImg <double> image)
+{
+	for (int i = 0; i < image.width(); i++)
+	{
+		for (int j = 0; j < (image.height()/2); j++)
+		{
+			for (int k = 0; k < 3; k++)
+			{
+				double temp = image(i, j, k);
+				image(i, j, k) = image(i, (image.height() - 1) - j, k);
+				image (i, (image.height() - 1) - j, k) = temp;
+			}
+		}
+	}
+	return image;
+}
+
+CImg <double> DiagonalFlip(CImg <double> image)
+{
+	return  HorizontalFlip(VercicalFlip(image));
 }
