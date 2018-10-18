@@ -61,31 +61,18 @@ CImg <double> Negative(CImg<double> image)
 	return image;
 }
 
-CImg <double> Contrast(CImg<double> image, int value)
+CImg <double> Contrast(CImg<double> image, float value)
 {
-	double cont_factor;
+	float cont_factor;
 
-	
 	for (int i = 0; i < image.width(); i++)
 	{
 		for (int j = 0; j < image.height(); j++)
 		{
-			for (int k = 0; k < 3; k++)
+			for (int k = 0; k < image.spectrum(); k++)
 			{
-				cont_factor = value * ((image(i, j, k) - 127));
-
-				if ((value - 127) + 127 > 255)
-				{
-					image(i, j, k) = 255;
-				}
-				else if (value + 127 < 0)
-				{
-					image(i, j, k) = 0;
-				}
-				else
-				{
-					image(i, j, k) = cont_factor + 127;
-				}
+				cont_factor = (259 * (value + 255)) / (255 * (259 - value));
+				image(i, j, k) = ((image(i, j, k) - 127) * cont_factor) + 127;
 			}
 		}
 	}
