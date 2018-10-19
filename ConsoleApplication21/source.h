@@ -11,7 +11,7 @@ CImg<double> Brightness(CImg<double> image, int x);
 
 CImg<double> Negative(CImg<double> image);
 
-CImg <double> Contrast(CImg<double> image, float value);
+CImg <double> Contrast(CImg<double> image, int value);
 
 CImg <double> HorizontalFlip(CImg <double> image);
 
