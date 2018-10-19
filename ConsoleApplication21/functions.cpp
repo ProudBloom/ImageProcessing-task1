@@ -111,19 +111,7 @@ CImg <double> VerticalFlip(CImg <double> image)
 
 CImg <double> DiagonalFlip(CImg <double> image)
 {
-	for (int i = 0; i < image.width(); i++)
-	{
-		for (int j = 0; j < image.height() / 2; j++)
-		{
-			for (int k = 0; k < image.spectrum(); k++)
-			{
-				double temp = image(i, j, k);
-
-				image(i, j, k) = image((image.width() - 1) - i, (image.height() - 1) - j, k);
-				image((image.width() - 1) - i, (image.height() - 1) - j, k) = temp;
-			}
-		}
-	}
-	return image;
+	
+	return HorizontalFlip(VerticalFlip(image));
 }
 
