@@ -18,3 +18,5 @@ CImg <double> HorizontalFlip(CImg <double> image);
 CImg <double> VerticalFlip(CImg <double> image);
 
 CImg <double> DiagonalFlip(CImg <double> image);
+
+CImg <double> AlphaTrimmedMeanFilter(CImg <double> image);
