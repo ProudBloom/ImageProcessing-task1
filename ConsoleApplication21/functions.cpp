@@ -115,3 +115,25 @@ CImg <double> DiagonalFlip(CImg <double> image)
 	return HorizontalFlip(VerticalFlip(image));
 }
 
+CImg <double> Resize(CImg <double> image, int n_widht, int n_height)
+{
+	CImg <double> n_image (n_widht, n_height, 1, 3, 0);
+	float frac_x = (float)image.width() / (float)n_widht;
+	float frac_y = (float)image.height() / (float)n_height;
+	
+
+	for (int i = 0; i < n_widht; i++)
+	{
+		for (int j = 0; j < n_height; j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				n_image(i, j, k) = image((int)(i*frac_x), (int)(j*frac_y), k);
+			}
+			 
+		}
+		
+	}
+
+	return   n_image;
+}

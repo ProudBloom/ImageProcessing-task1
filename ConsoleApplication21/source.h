@@ -18,3 +18,5 @@ CImg <double> HorizontalFlip(CImg <double> image);
 CImg <double> VerticalFlip(CImg <double> image);
 
 CImg <double> DiagonalFlip(CImg <double> image);
+
+CImg <double> Resize(CImg <double> image, int n_widht, int n_height);
