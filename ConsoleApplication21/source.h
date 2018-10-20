@@ -19,4 +19,8 @@ CImg <double> VerticalFlip(CImg <double> image);
 
 CImg <double> DiagonalFlip(CImg <double> image);
 
+
 CImg <double> Resize(CImg <double> image, int n_widht, int n_height);
+
+CImg <double> AlphaTrimmedMeanFilter(CImg <double> image);
+
