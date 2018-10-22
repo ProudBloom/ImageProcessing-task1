@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "source.h"
 #include <iostream>
+#include <math.h>
 #include <string>
 #include <vector>
 
@@ -113,20 +114,8 @@ CImg <double> VerticalFlip(CImg <double> image)
 
 CImg <double> DiagonalFlip(CImg <double> image)
 {
-	for (int i = 0; i < image.width(); i++)
-	{
-		for (int j = 0; j < image.height() / 2; j++)
-		{
-			for (int k = 0; k < image.spectrum(); k++)
-			{
-				double temp = image(i, j, k);
-
-				image(i, j, k) = image((image.width() - 1) - i, (image.height() - 1) - j, k);
-				image((image.width() - 1) - i, (image.height() - 1) - j, k) = temp;
-			}
-		}
-	}
-	return image;
+	
+	return VerticalFlip(HorizontalFlip(image));
 }
 
 CImg <double> Resize(CImg <double> image, int n_widht, int n_height)
@@ -214,3 +203,67 @@ CImg <double> AlphaTrimmedMeanFilter(CImg <double> image)
 	return result;
 
 }
+
+CImg <double> Contraharmonic(CImg <double> image, int order)
+{
+	
+	cout << "checkpoint" << endl;
+	CImg <double> result (image.width(), image.height(), image.depth(), image.spectrum());
+	double temp = 0;
+
+	for (int i = 0; i < image.width(); i++)
+	{
+		cout << i << "/" << image.width() << endl;
+		
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				
+				for (int x = i - 1; x <= i + 1; x++)
+				{
+					if (x < 0 || x >= image.width()) continue;
+
+					for (int y = i - 1; y <= i + 1; y++)
+					{
+						if (y < 0 || y >= image.height()) continue;
+						
+						temp += image(x, y,0, k);
+					}
+				}
+
+				result(i, j,0, k) = (int)(pow(temp, order + 1) / pow(temp, order));
+				
+			}
+		}
+	}
+
+	
+
+	return result;
+}
+
+/*
+CImg <double> ContraFunction(CImg <double> result, CImg <double> image, int i, int j, int k, int order)
+{
+	double temp = 0;
+
+	
+
+	for (int x = i - 1; x <= i + 1; x++)
+	{
+		if (x <0 || x>=image.width()) continue;
+
+		for (int y = i - 1; y <= i + 1; y++)
+		{
+			if (y < 0 || y >= image.height()) continue;
+			
+			temp += image(x, y, k);
+		}
+	}
+
+	result(i, j, k) = pow(temp, order + 1) / pow(temp, order);
+
+	return result;
+}
+*/

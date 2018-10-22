@@ -1,7 +1,9 @@
 #include "CImg.h"
 #include "pch.h"
 #include <iostream>
+#include <math.h>
 #include <string>
+#include <vector>
 using namespace std;
 using namespace cimg_library;
 
@@ -19,8 +21,10 @@ CImg <double> VerticalFlip(CImg <double> image);
 
 CImg <double> DiagonalFlip(CImg <double> image);
 
-
 CImg <double> Resize(CImg <double> image, int n_widht, int n_height);
 
 CImg <double> AlphaTrimmedMeanFilter(CImg <double> image);
 
+CImg <double> Contraharmonic(CImg <double> image, int order);
+
+//CImg <double> ContraFunction(CImg <double> result, CImg <double> image, int i, int j, int k, int order);
