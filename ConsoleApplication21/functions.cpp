@@ -21,6 +21,7 @@ void Help()
 		<< "--contrast <value>" << endl
 		<< "--hflip" << endl
 		<< "--vflip" << endl
+		<< "--cmean <OrderOfFilter> <WindowSize>" << endl
 		<< "--dflip" << endl << endl;
 	cout << "ImgProc Application made by Mariusz Pisarski & Jakub Sztompka IT" << endl << "Ver. 0.1" << endl;
 }
@@ -251,38 +252,36 @@ double MaximumDifference(CImg <double> image, CImg <double> image2)
 	return max;
 }
 
-
-
-CImg <double> Contraharmonic(CImg <double> image, int order)
+CImg <double> Contraharmonic(CImg <double> image, int order, int windowsize)
 {
 	
-	cout << "checkpoint" << endl;
-	CImg <double> result (image.width(), image.height(), image.depth(), image.spectrum());
+	
+	CImg <double> result (image.width(), image.height(), image.depth(), image.spectrum(), 0);
 	double temp = 0;
-
-	for (int i = 0; i < image.width(); i++)
-	{
-		cout << i << "/" << image.width() << endl;
-		
-		for (int j = 0; j < image.height(); j++)
-		{
+	double temp2 = 0;
+	float size_temp = ((windowsize / 2) + (1 / 2));
+	
+	for (float i = 0; i < image.width(); i++)
+	{	
+		for (float j = 0; j < image.height(); j++)
+		{		
 			for (int k = 0; k < image.spectrum(); k++)
 			{
-				
-				for (int x = i - 1; x <= i + 1; x++)
+				temp = 0;
+				temp2 = 0;
+				for (float x = i - size_temp; x <= i + size_temp; x++)
 				{
-					if (x < 0 || x >= image.width()) continue;
+					if (x < 0 || x >= image.width()) { continue; }
 
-					for (int y = i - 1; y <= i + 1; y++)
+					for (float y = j - size_temp; y <= j + size_temp; y++)
 					{
-						if (y < 0 || y >= image.height()) continue;
+						if (y < 0 || y >= image.height()) { continue; }
 						
-						temp += image(x, y,0, k);
+						temp += pow(image(x, y, k), order + 1);
+						temp2 += pow(image(x, y, k), order);
 					}
 				}
-
-				result(i, j,0, k) = (int)(pow(temp, order + 1) / pow(temp, order));
-				
+				result(i, j, k) = temp / temp2;
 			}
 		}
 	}
@@ -290,28 +289,43 @@ CImg <double> Contraharmonic(CImg <double> image, int order)
 	return result;
 }
 
-/*
-CImg <double> ContraFunction(CImg <double> result, CImg <double> image, int i, int j, int k, int order)
+CImg <double> Mean(CImg <double> image, int order)
 {
+
+	cout << "checkpoint" << endl;
+	CImg <double> result(image.width(), image.height(), image.depth(), image.spectrum(), 0);
 	double temp = 0;
+	int counter = 0;
 
-	
-
-	for (int x = i - 1; x <= i + 1; x++)
+	for (int i = 0; i < image.width(); i++)
 	{
-		if (x <0 || x>=image.width()) continue;
+		cout << i << "/" << image.width() << endl;
 
-		for (int y = i - 1; y <= i + 1; y++)
+		for (int j = 0; j < image.height(); j++)
 		{
-			if (y < 0 || y >= image.height()) continue;
-			
-			temp += image(x, y, k);
+
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				counter = 0;
+				temp = 0;
+				for (int x = i - 1; x <= i + 1; x++)
+				{
+					if (x < 0 || x >= image.width()) { continue; }
+
+					for (int y = j - 1; y <= j + 1; y++)
+					{
+						if (y < 0 || y >= image.height()) { continue; }
+						counter++;
+						temp += image(x, y, k);
+					}
+				}
+
+				result(i, j, k) = temp / counter;
+
+			}
 		}
 	}
 
-	result(i, j, k) = pow(temp, order + 1) / pow(temp, order);
-
 	return result;
 }
-*/
 

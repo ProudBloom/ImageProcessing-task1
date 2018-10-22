@@ -25,11 +25,10 @@ CImg <double> Resize(CImg <double> image, int n_widht, int n_height);
 
 CImg <double> AlphaTrimmedMeanFilter(CImg <double> image);
 
+CImg <double> Contraharmonic(CImg <double> image, int order, int windowsize);
 
-CImg <double> Contraharmonic(CImg <double> image, int order);
-
+CImg <double> Mean(CImg <double> image, int order);
 //CImg <double> ContraFunction(CImg <double> result, CImg <double> image, int i, int j, int k, int order);
-
 double MeanSquareError(CImg <double> image, CImg <double> corrupted);
 
 double MaximumDifference(CImg <double> image, CImg <double> image2);
