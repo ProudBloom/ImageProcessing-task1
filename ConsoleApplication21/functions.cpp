@@ -4,7 +4,7 @@
 #include <iostream>
 #include <math.h>
 #include <string>
-#include <vector>
+#include <cmath>
 
 using namespace std;
 using namespace cimg_library;
@@ -57,9 +57,10 @@ CImg <double> Negative(CImg<double> image)
 	return image;
 }
 
-CImg <double> Contrast(CImg<double> image, int value)
+CImg <double> Contrast(CImg<double> image, float value)
 {
 	float cont_factor;
+	cont_factor = (259 * (value + 255)) / (255 * (259 - value));
 
 	for (int i = 0; i < image.width(); i++)
 	{
@@ -67,8 +68,9 @@ CImg <double> Contrast(CImg<double> image, int value)
 		{
 			for (int k = 0; k < image.spectrum(); k++)
 			{
-				cont_factor = (259 * (value + 255)) / (255 * (259 - value));
-				image(i, j, k) = ((image(i, j, k) - 127) * value) + 127;
+				image(i, j, k) = ((image(i, j, k) - 127) * cont_factor) + 127;
+				if (image(i, j, k) > 255) image(i, j, k) = 255;
+				else if (image(i, j, k) < 0) image(i, j, k) = 0;
 			}
 		}
 	}
@@ -105,7 +107,7 @@ CImg <double> VerticalFlip(CImg <double> image)
 				double temp = image(i, j, k);
 
 				image(i, j, k) = image(i, (image.height() - 1) - j, k);
-				image(i,(image.height() - 1) - j, k) = temp;
+				image(i, (image.height() - 1) - j, k) = temp;
 			}
 		}
 	}
@@ -201,8 +203,55 @@ CImg <double> AlphaTrimmedMeanFilter(CImg <double> image)
 		}
 	}
 	return result;
-
 }
+
+double MeanSquareError(CImg <double> image, CImg <double> corrupted)
+{
+	double diff_sum = 0;
+
+	for (int i = 0; i < image.width(); i++)
+	{
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				diff_sum += pow((corrupted(i, j, k) - image(i, j, k)), 2);
+			}
+		}
+	}
+	double mse = diff_sum / (image.width()*image.height());
+	cout << "Mean square error : " << mse << endl;
+
+	return mse;
+}
+
+double MaximumDifference(CImg <double> image, CImg <double> image2)
+{
+
+	double difference, max;
+
+	for (int i = 0; i < image.width(); i++)
+	{
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				max = image(0, 0, k) - image2(0, 0, k);
+				difference = abs(image(i, j, k) - image2(i, j, k));
+
+				if (max < difference)
+				{
+					difference = max;
+				}
+			}
+		}
+	}
+
+	cout << "Max difference : " << abs(max) << endl;
+	return max;
+}
+
+
 
 CImg <double> Contraharmonic(CImg <double> image, int order)
 {
@@ -238,8 +287,6 @@ CImg <double> Contraharmonic(CImg <double> image, int order)
 		}
 	}
 
-	
-
 	return result;
 }
 
@@ -267,3 +314,4 @@ CImg <double> ContraFunction(CImg <double> result, CImg <double> image, int i, i
 	return result;
 }
 */
+
