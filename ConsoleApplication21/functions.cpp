@@ -21,10 +21,17 @@ void Help()
 		<< "--contrast <value>" << endl
 		<< "--hflip" << endl
 		<< "--vflip" << endl
+		<< "--dflip" << endl
 		<< "--cmean <OrderOfFilter> <WindowSize>" << endl
-		<< "--dflip" << endl << endl;
+		<< "--mse <image2>" << endl
+		<< "--pmse <image2>" << endl
+		<< "--snr <image2>" << endl
+		<< "--psnr <image2>" << endl
+		<< "--md <image2>" << endl << endl;
 	cout << "ImgProc Application made by Mariusz Pisarski & Jakub Sztompka IT" << endl << "Ver. 0.1" << endl;
 }
+
+
 
 CImg <double> Brightness(CImg<double> image, int value)
 {
@@ -43,6 +50,8 @@ CImg <double> Brightness(CImg<double> image, int value)
 	return image;
 }
 
+
+
 CImg <double> Negative(CImg<double> image)
 {
 	for (int i = 0; i < image.width(); i++)
@@ -57,6 +66,8 @@ CImg <double> Negative(CImg<double> image)
 	}
 	return image;
 }
+
+
 
 CImg <double> Contrast(CImg<double> image, float value)
 {
@@ -78,6 +89,8 @@ CImg <double> Contrast(CImg<double> image, float value)
 	return image;
 }
 
+
+
 CImg <double> HorizontalFlip(CImg <double> image)
 {
 	for (int i = 0; i < image.width() / 2; i++)
@@ -97,6 +110,8 @@ CImg <double> HorizontalFlip(CImg <double> image)
 	return image;
 }
 
+
+
 CImg <double> VerticalFlip(CImg <double> image)
 {
 	for (int i = 0; i < image.width(); i++)
@@ -115,11 +130,15 @@ CImg <double> VerticalFlip(CImg <double> image)
 	return image;
 }
 
+
+
 CImg <double> DiagonalFlip(CImg <double> image)
 {
 	
 	return VerticalFlip(HorizontalFlip(image));
 }
+
+
 
 CImg <double> Resize(CImg <double> image, int n_widht, int n_height)
 {
@@ -142,6 +161,8 @@ CImg <double> Resize(CImg <double> image, int n_widht, int n_height)
 	}
 	return   n_image;
 }
+
+
 
 CImg <double> AlphaTrimmedMeanFilter(CImg <double> image)
 {
@@ -206,7 +227,9 @@ CImg <double> AlphaTrimmedMeanFilter(CImg <double> image)
 	return result;
 }
 
-double MeanSquareError(CImg <double> image, CImg <double> corrupted)
+
+
+double MeanSquareError(CImg <double> image, CImg <double> image2)
 {
 	double diff_sum = 0;
 
@@ -216,7 +239,7 @@ double MeanSquareError(CImg <double> image, CImg <double> corrupted)
 		{
 			for (int k = 0; k < image.spectrum(); k++)
 			{
-				diff_sum += pow((corrupted(i, j, k) - image(i, j, k)), 2);
+				diff_sum += pow((image(i, j, k) - image2(i, j, k)), 2);
 			}
 		}
 	}
@@ -225,6 +248,106 @@ double MeanSquareError(CImg <double> image, CImg <double> corrupted)
 
 	return mse;
 }
+
+
+
+double PeakMeanSquareError(CImg <double> image, CImg <double> image2)
+{
+	double maximum = 0;
+	double diff_sum = 0;
+
+	for (int i = 0; i < image.width(); i++)	//MAXIMUM
+	{
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				if (maximum < image(i, j, k))
+				{
+					maximum = image(i, j, k);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < image.width(); i++)	//MSE
+	{
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				diff_sum += pow((image(i, j, k) - image2(i, j, k)), 2);
+			}
+		}
+	}
+	double mse = diff_sum / (image.width()*image.height());
+	double pmse = (mse) / (pow(maximum, 2));
+	cout << "Peak Mean square error : " << pmse << endl;
+
+	return pmse;
+}
+
+
+
+double SignalNoiseRatio(CImg <double> image, CImg <double> image2)
+{
+	double sum = 0;
+	double diff_sum = 0;
+	for (int i = 0; i < image.width(); i++)
+	{
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				sum += pow(image(i, j, k), 2);
+				diff_sum += pow((image(i, j, k) - image2(i, j, k)), 2);
+			}
+		}
+	}
+	double snr = 10 * log10(sum / diff_sum);
+
+	cout << "Signal to noise ratio : " << snr << "[dB]" <<  endl;
+	return snr;
+}
+
+
+
+double PeakSignalNoiseRatio(CImg <double> image, CImg <double> image2)
+{
+	double diff_sum = 0;
+	double maximum = 0;
+
+	for (int i = 0; i < image.width(); i++)	//MAXIMUM
+	{
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				if (maximum < image(i, j, k))
+				{
+					maximum = image(i, j, k);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < image.width(); i++)
+	{
+		for (int j = 0; j < image.height(); j++)
+		{
+			for (int k = 0; k < image.spectrum(); k++)
+			{
+				diff_sum += pow((image2(i, j, k) - image(i, j, k)), 2);
+			}
+		}
+	}
+	double psnr = 10 * log10((maximum*maximum) / diff_sum);
+
+	cout << "Peak signal to noise ratio : " << psnr << "[dB]" << endl;
+	return psnr;
+}
+
+
 
 double MaximumDifference(CImg <double> image, CImg <double> image2)
 {
@@ -251,6 +374,8 @@ double MaximumDifference(CImg <double> image, CImg <double> image2)
 	cout << "Max difference : " << abs(max) << endl;
 	return max;
 }
+
+
 
 CImg <double> Contraharmonic(CImg <double> image, int order, int windowsize)
 {
@@ -288,6 +413,8 @@ CImg <double> Contraharmonic(CImg <double> image, int order, int windowsize)
 
 	return result;
 }
+
+
 
 CImg <double> Mean(CImg <double> image, int order)
 {
@@ -328,4 +455,3 @@ CImg <double> Mean(CImg <double> image, int order)
 
 	return result;
 }
-

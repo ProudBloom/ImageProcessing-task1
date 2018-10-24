@@ -29,7 +29,13 @@ CImg <double> Contraharmonic(CImg <double> image, int order, int windowsize);
 
 CImg <double> Mean(CImg <double> image, int order);
 //CImg <double> ContraFunction(CImg <double> result, CImg <double> image, int i, int j, int k, int order);
-double MeanSquareError(CImg <double> image, CImg <double> corrupted);
+double MeanSquareError(CImg <double> image, CImg <double> image2);
+
+double PeakMeanSquareError(CImg <double> image, CImg <double> image2);
+
+double SignalNoiseRatio(CImg <double> image, CImg <double> image2);
+
+double PeakSignalNoiseRatio(CImg <double> image, CImg <double> image2);
 
 double MaximumDifference(CImg <double> image, CImg <double> image2);
 
